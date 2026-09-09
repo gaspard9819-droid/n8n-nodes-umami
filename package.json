@@ -1,6 +1,6 @@
 {
 	"name": "n8n-nodes-umami",
-	"version": "0.1.3",
+	"version": "0.1.4",
 	"description": "n8n community node for Umami, the privacy-first open source web analytics platform",
 	"license": "MIT",
 	"homepage": "https://github.com/gaspard9819-droid/n8n-nodes-umami",
