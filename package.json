@@ -1,0 +1,59 @@
+{
+	"name": "n8n-nodes-umami",
+	"version": "0.1.0",
+	"description": "n8n community node for Umami, the privacy-first open source web analytics platform",
+	"license": "MIT",
+	"homepage": "https://github.com/gaspard9819-droid/n8n-nodes-umami",
+	"keywords": [
+		"n8n-community-node-package",
+		"umami",
+		"analytics",
+		"web-analytics",
+		"privacy"
+	],
+	"author": {
+		"name": "Gáspár Dániel",
+		"email": "gaspar.d9819@gmail.com"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/gaspard9819-droid/n8n-nodes-umami.git"
+	},
+	"scripts": {
+		"build": "n8n-node build",
+		"build:watch": "tsc --watch",
+		"dev": "n8n-node dev",
+		"lint": "n8n-node lint",
+		"lint:fix": "n8n-node lint --fix",
+		"release": "n8n-node release",
+		"prepublishOnly": "n8n-node prerelease"
+	},
+	"files": [
+		"dist",
+		"!dist/tsconfig.tsbuildinfo",
+		"!dist/**/*.d.ts",
+		"!dist/**/*.js.map",
+		"README.md",
+		"LICENSE.md"
+	],
+	"n8n": {
+		"n8nNodesApiVersion": 1,
+		"strict": true,
+		"credentials": [
+			"dist/credentials/UmamiApi.credentials.js"
+		],
+		"nodes": [
+			"dist/nodes/Umami/Umami.node.js"
+		]
+	},
+	"devDependencies": {
+		"@n8n/node-cli": "^0.47.0",
+		"eslint": "9.32.0",
+		"prettier": "3.6.2",
+		"release-it": "^19.0.4",
+		"typescript": "5.9.2"
+	},
+	"peerDependencies": {
+		"n8n-workflow": "*"
+	}
+}
