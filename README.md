@@ -130,4 +130,4 @@ If you are new to n8n, see the
 
 ## License
 
-[MIT](LICENSE.md)
+[MIT](LICENSE)
