@@ -76,7 +76,33 @@ Self-hosted Umami authenticates with a bearer token rather than an API key.
      -d '{"username":"your-username","password":"your-password"}'
    ```
 
+   Replace `analytics.example.com` with your own instance — that hostname is a
+   documentation placeholder and will not resolve.
+
 2. Copy the `token` value from the response.
+
+   **Copying it by hand is where this usually goes wrong**, because a copy out
+   of a terminal brings a trailing line break with it and the credential then
+   fails (see the troubleshooting note below). These put the token on the
+   clipboard on its own, with nothing extra attached:
+
+   *Windows (PowerShell):*
+
+   ```powershell
+   (Invoke-RestMethod -Method Post -Uri "https://analytics.example.com/api/auth/login" `
+     -ContentType "application/json" `
+     -Body '{"username":"your-username","password":"your-password"}').token | Set-Clipboard
+   ```
+
+   *macOS / Linux:*
+
+   ```bash
+   curl -s -X POST https://analytics.example.com/api/auth/login \
+     -H "Content-Type: application/json" \
+     -d '{"username":"your-username","password":"your-password"}' \
+     | python3 -c "import json,sys;print(json.load(sys.stdin)['token'],end='')" \
+     | pbcopy   # Linux: xclip -selection clipboard
+   ```
 3. In n8n, choose **Self-Hosted**, enter your **Instance URL** (for example
    `https://analytics.example.com`, with no trailing slash and no `/api`) and
    paste the token into **Bearer Token**.
@@ -86,6 +112,15 @@ Requests go to `<instance>/api` with an `Authorization: Bearer` header.
 Changing the account's password invalidates its tokens, so if the credential
 starts returning 401 after a password change, request a new token and update
 the credential.
+
+**If the test fails with `Invalid character in header content ["Authorization"]`,
+the token field contains a line break.** This is the likeliest thing to go wrong
+when setting the credential up, because the token is ~380 characters and a
+newline is invisible in a masked password field. It usually arrives by copying
+the token out of a terminal, which appends one. The fix is to clear the field
+completely and paste again without the trailing break — the message means the
+header could not be built at all, so nothing was sent and the token itself is
+almost certainly fine.
 
 Use the credential's **Test** button to confirm the connection — it calls `/me`
 and reports whether the credentials are accepted.
@@ -111,13 +146,21 @@ visitors**, not pageviews). One visitor loading the same page four times counts
 once, so these numbers are smaller than the pageview total from *Get Summary*.
 That is Umami's behaviour, not a quirk of this node.
 
-Dates are entered as ordinary date values; the node converts them to the
-millisecond timestamps the Umami API expects.
+### Choosing a period
 
-**Start and End Date are exact moments, not whole days.** A date picked with no
-time is midnight, so an end date of today excludes everything that happened
-today — the result is zero rather than an error. To cover today, set the end to
-tomorrow's date, or give an explicit end time.
+The dated operations take a **Period**: Today, Last 24 Hours, Last 7 Days, Last
+30 Days, This Month, or Custom Range. Relative periods are resolved when the
+workflow runs, and all of them include today's traffic.
+
+Pick **Custom Range** to set exact Start and End Dates instead. Those are exact
+moments, not whole days — a date with no time means midnight, so an end date of
+today excludes everything that happened today and returns zero rather than an
+error. Set the end to tomorrow, or give an explicit time.
+
+Relative periods exist mainly so the node works as an **AI agent tool**. An
+agent has no clock, so asked for "last week" it cannot fill in two absolute
+dates — it stops and asks the user. Given a named period it simply picks one
+and calls the tool.
 
 If you are new to n8n, see the
 [Try it out](https://docs.n8n.io/try-it-out/) documentation.

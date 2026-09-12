@@ -15,8 +15,13 @@ import type {
  *     against <your-instance>/api.
  *
  * Both header fields are always declared. Each one resolves to an empty string
- * when the other hosting type is selected, and n8n omits headers whose value is
- * empty, so exactly one credential is sent per request.
+ * when the other hosting type is selected, so exactly one carries a value per
+ * request. Verified 2026-09-11 against a live instance: sending the other
+ * header empty alongside it is harmless — Umami answers 200 either way.
+ *
+ * Note that a line break anywhere in the token makes Node refuse to build the
+ * header at all, failing with `Invalid character in header content`. That is a
+ * paste artifact rather than a bad token, and the README says how to clear it.
  */
 export class UmamiApi implements ICredentialType {
 	name = 'umamiApi';
